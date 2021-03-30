@@ -9,7 +9,9 @@ package metier.modele;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
+import util.AstroNet;
 
 
 /**
@@ -22,18 +24,45 @@ public class Client extends User implements Serializable {
 
     //SimpleDateFormat?
     private Date birthDate;
+    private String adressePostale;
+    private ProfilAstral profilA;
     
-    public Client(String nom, String prenom, String mail, String motDePasse, String phoneNumber, Date birthDate) {
+    public Client(String nom, String prenom, String mail, String motDePasse, String phoneNumber, Date birthDate, String adressePostale) {
         super(nom, prenom, mail, motDePasse, phoneNumber);
         this.birthDate = birthDate;
+        this.adressePostale = adressePostale;     
     }
     
     public Client()
     {}
 
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getAdressePostale() {
+        return adressePostale;
+    }
+
+    public void setAdressePostale(String adressePostale) {
+        this.adressePostale = adressePostale;
+    }
+
+    public ProfilAstral getProfilA() {
+        return profilA;
+    }
+
+    public void setProfilA(ProfilAstral profilA) {
+        this.profilA = profilA;
+    }
+
     @Override
     public String toString() {
-        return super.toString() + ", Client{" + "birthDate=" + birthDate + '}';
+        return super.toString() + ", Client{" + "birthDate=" + birthDate + '}' + profilA.toString();
     }
     
     

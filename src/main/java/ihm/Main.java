@@ -27,6 +27,7 @@ class Main {
     {
         JpaUtil.init();
         testerInscription();
+        testerListe();
         JpaUtil.destroy();
     }
     
@@ -47,8 +48,8 @@ class Main {
     {
         ClientService serviceC = new ClientService();
         EmployeService serviceE = new EmployeService();
-        Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010));
-        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998));
+        Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
+        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
         Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "M");
         serviceC.inscrireClient(b);
         serviceC.inscrireClient(a);

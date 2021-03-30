@@ -7,12 +7,15 @@ package metier.service;
 
 import dao.ClientDao;
 import dao.JpaUtil;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import metier.modele.Client;
+import metier.modele.ProfilAstral;
+import util.AstroNet;
 
 /**
  *
@@ -22,6 +25,16 @@ public class ClientService {
 
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
+        
+        try {
+            AstroNet astro = new AstroNet();
+            List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
+            ProfilAstral profilClient = new ProfilAstral(p.get(0), p.get(1), p.get(2), p.get(3));
+            client.setProfilA(profilClient);
+        }
+        catch(IOException e){
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
+        }
         try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
