@@ -6,6 +6,7 @@
 package metier.service;
 
 import dao.ClientDao;
+import dao.EmployeDao;
 import dao.JpaUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import metier.modele.Client;
+import metier.modele.Employe;
 import metier.modele.ProfilAstral;
 import util.AstroNet;
 
@@ -21,11 +23,11 @@ import util.AstroNet;
  *
  * @author Arthur
  */
-public class ClientService {
+public class Service {
 
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
-        
+        //calcul profil astral
         try {
             AstroNet astro = new AstroNet();
             List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
@@ -35,6 +37,7 @@ public class ClientService {
         catch(IOException e){
             Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
         }
+        //persistence du client
         try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
@@ -109,5 +112,32 @@ public class ClientService {
             }
         }
         return client;
+    }
+    
+    public Employe ajouterEmploye(Employe emp)
+    {
+        EmployeDao dao = new EmployeDao();
+        try
+        {
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
+            dao.creer(emp);
+            JpaUtil.validerTransaction();
+            
+            Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterEmploye");
+            Logger.getAnonymousLogger().log(Level.INFO, emp.toString());
+        }
+        catch (Exception ex)
+        {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR ajouterEmploye");
+            Logger.getAnonymousLogger().log(Level.SEVERE, emp.toString());
+            emp = null;
+            JpaUtil.annulerTransaction();
+        }
+        finally
+        {
+            JpaUtil.fermerContextePersistance();
+        }
+        return emp;
     }
 }

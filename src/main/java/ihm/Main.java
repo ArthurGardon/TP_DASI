@@ -14,8 +14,7 @@ import dao.JpaUtil;
 import dao.ClientDao;
 import java.util.Date;
 import metier.modele.Employe;
-import metier.service.ClientService;
-import metier.service.EmployeService;
+import metier.service.Service;
 
 
 /**
@@ -33,32 +32,31 @@ class Main {
     
      static void testerAuth()
     {
-        ClientService service = new ClientService();
+        Service service = new Service();
         System.out.println(service.authentifierClient("a@g.com", "123"));
     }
     
     static void testerListe()
     {
-        ClientService service = new ClientService();
+        Service service = new Service();
         System.out.println(service.listerClients());
     }
 
     
     static void testerInscription()
     {
-        ClientService serviceC = new ClientService();
-        EmployeService serviceE = new EmployeService();
+        Service service = new Service();
         Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
         Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
         Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "M");
-        serviceC.inscrireClient(b);
-        serviceC.inscrireClient(a);
-        serviceE.ajouterEmploye(c);
+        service.inscrireClient(b);
+        service.inscrireClient(a);
+        service.ajouterEmploye(c);
     }
     
     static void testerRechercheClient()
     {
-        ClientService service = new ClientService();
+        Service service = new Service();
         
         Client a = service.trouverClient(1L);
         System.out.println(a);
