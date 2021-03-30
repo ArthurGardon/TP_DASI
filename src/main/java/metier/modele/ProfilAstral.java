@@ -6,16 +6,24 @@
 package metier.modele;
 
 import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  *
  * @author Arthur
  */
+@Entity
 public class ProfilAstral implements Serializable{
     private String zodiacAstro;
     private String chineseAstro;
     private String color;
     private String animal;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     public ProfilAstral(String zodiacAstro, String chineseAstro, String color, String animal) {
         this.zodiacAstro = zodiacAstro;
@@ -64,6 +72,14 @@ public class ProfilAstral implements Serializable{
     @Override
     public String toString() {
         return "ProfilAstral{" + "zodiacAstro=" + zodiacAstro + ", chineseAstro=" + chineseAstro + ", color=" + color + ", animal=" + animal + '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
     
 }

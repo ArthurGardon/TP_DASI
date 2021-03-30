@@ -25,6 +25,7 @@ public class Client extends User implements Serializable {
     //SimpleDateFormat?
     private Date birthDate;
     private String adressePostale;
+    @OneToOne(cascade = CascadeType.PERSIST)
     private ProfilAstral profilA;
     
     public Client(String nom, String prenom, String mail, String motDePasse, String phoneNumber, Date birthDate, String adressePostale) {
