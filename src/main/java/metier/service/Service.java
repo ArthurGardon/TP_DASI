@@ -9,6 +9,8 @@ import dao.ClientDao;
 import dao.EmployeDao;
 import dao.JpaUtil;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ import metier.modele.Client;
 import metier.modele.Employe;
 import metier.modele.ProfilAstral;
 import util.AstroNet;
+import util.Message;
 
 /**
  *
@@ -28,6 +31,7 @@ public class Service {
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
         //calcul profil astral
+        //TODO catch and cancel the whole function?
         try {
             AstroNet astro = new AstroNet();
             List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
@@ -38,6 +42,12 @@ public class Service {
             Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
         }
         //persistence du client
+        StringWriter corps = new StringWriter();
+        PrintWriter mailWriter = new PrintWriter(corps);
+        String sender = "contact@predict.if";
+        String reciever = client.getMail();
+        String sujet= "";
+        
         try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
@@ -48,9 +58,9 @@ public class Service {
             
             Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterClient");
             
-            System.out.println("Client inscrit");
-            System.out.println(client.toString());
-            
+            //contenu du mail
+            sujet = "Bienvenue chez Predict'IF";
+            mailWriter.println("Bonjour " + client.getPrenom() + ", nous vous confirmons votre inscription au service PREDICT’IF.\nRendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos mediums");
         } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "erreur ajouterClient");
             ex.printStackTrace();
@@ -58,9 +68,17 @@ public class Service {
             System.out.println(client.toString());
             JpaUtil.annulerTransaction();
             
+            //contenu du mail
+            sujet = "Echec de l'inscription chez Predict'IF";
+            mailWriter.println("Bonjour " + client.getPrenom() + ", votre inscription au service PREDICT’IF a malencontreusement échoué...\nMerci de recommencer ultérieurement.");
+
+            
             client = null;
         } finally {
             JpaUtil.fermerContextePersistance();
+            
+            //envoi du mail
+            Message.envoyerMail(sender, reciever, sujet, corps.toString());
         }
         return client;
     }
