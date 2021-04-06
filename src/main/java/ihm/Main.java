@@ -12,7 +12,10 @@ import javax.persistence.Persistence;
 import metier.modele.Client;
 import dao.JpaUtil;
 import dao.ClientDao;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import metier.modele.Employe;
 import metier.service.Service;
 
@@ -46,7 +49,13 @@ class Main {
     static void init()
     {
         Service service = new Service();
+        try
+        {
         service.initBD();
+        }
+        catch(ParseException e){
+            Logger.getAnonymousLogger().log(Level.INFO, "Erreur parse date");
+        }
     }
     
     static void testerRechercheClient()
