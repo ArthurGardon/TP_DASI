@@ -17,6 +17,7 @@ import javax.persistence.*;
  */
 
 @Entity(name="PlatformUser")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public class User implements Serializable, Comparable<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

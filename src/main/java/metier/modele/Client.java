@@ -21,8 +21,8 @@ import util.AstroNet;
 
 @Entity
 public class Client extends User implements Serializable {
-
     //SimpleDateFormat?
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date birthDate;
     private String adressePostale;
     @OneToOne(cascade = CascadeType.PERSIST)

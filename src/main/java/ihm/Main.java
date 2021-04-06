@@ -26,7 +26,7 @@ class Main {
     {
         JpaUtil.init();
         testerInscription();
-        testerListe();
+        testerAuth();
         JpaUtil.destroy();
     }
     

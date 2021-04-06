@@ -35,4 +35,10 @@ public class ClientDao {
         TypedQuery<Client> query = JpaUtil.obtenirContextePersistance().createQuery(s, Client.class);
         return query.getResultList();
     }
+    
+    public Client chercherMail(String mail){
+        String s = "select e from Client e where e.mail = :mail";
+        TypedQuery<Client> query = JpaUtil.obtenirContextePersistance().createQuery(s, Client.class);
+        return query.setParameter("mail", mail).getSingleResult();
+    }
 }

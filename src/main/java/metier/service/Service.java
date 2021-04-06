@@ -63,7 +63,6 @@ public class Service {
             mailWriter.println("Bonjour " + client.getPrenom() + ", nous vous confirmons votre inscription au service PREDICT’IF.\nRendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos mediums");
         } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "erreur ajouterClient");
-            ex.printStackTrace();
             System.out.println("Erreur");
             System.out.println(client.toString());
             JpaUtil.annulerTransaction();
@@ -103,7 +102,7 @@ public class Service {
 
     public List<Client> listerClients() {
         ClientDao clientDao = new ClientDao();
-        List<Client> liste = new ArrayList<Client>();
+        List<Client> liste;
         try {
             JpaUtil.creerContextePersistance();
             liste = clientDao.chercherTous();
@@ -120,14 +119,15 @@ public class Service {
     
     public Client authentifierClient(String mail, String motDePasse)
     {
-        List<Client> clients = listerClients();
+        JpaUtil.creerContextePersistance();
+        ClientDao dao = new ClientDao();
+        Client c = dao.chercherMail(mail);
+        JpaUtil.fermerContextePersistance();
+        
         Client client = null;
-        for (Client c : clients)
+        if (c.getMotDePasse().equals(motDePasse))
         {
-            if (c.getMail() == mail && c.getMotDePasse() == motDePasse)
-            {
-                client = c;
-            }
+            client = c;
         }
         return client;
     }
