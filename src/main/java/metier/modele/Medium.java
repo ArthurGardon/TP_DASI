@@ -10,12 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  *
  * @author Arthur
  */
+//creer qu'une seule table car les differences entre types de medium sont faibles
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Medium implements Serializable {
     protected String denomination;
     protected String genre;

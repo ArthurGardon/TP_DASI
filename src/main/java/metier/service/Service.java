@@ -18,10 +18,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import metier.modele.Astrologue;
+import metier.modele.Cartomancien;
 import metier.modele.Client;
 import metier.modele.Employe;
 import metier.modele.Medium;
 import metier.modele.ProfilAstral;
+import metier.modele.Spirite;
 import util.AstroNet;
 import util.Message;
 
@@ -197,7 +200,11 @@ public class Service {
         inscrireClient(b);
         inscrireClient(a);
         ajouterEmploye(c);
-        Medium m = new Medium("Mme Irma", "F", "Mes cartes répondront à toutes vos questions personnelles.");
-        ajouterMedium(m);
+        Cartomancien cart = new Cartomancien("Mme Irma", "F", "Mes cartes répondront à toutes vos questions personnelles.");
+        Spirite spir = new Spirite("Professeur Tran", "H", "Votre avenir est devant vous: regardons le ensemble!", "Marc de cafe, boule de cristal, oeilles de lapin");
+        Astrologue astr = new Astrologue("Mr M", "H", "Avenir, avenir, que nous reserves tu?", "Institut des nouveaux Savoirs Astrologiques", "2010");
+        ajouterMedium(cart);
+        ajouterMedium(spir);
+        ajouterMedium(astr);
     }
 }
