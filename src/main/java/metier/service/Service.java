@@ -8,16 +8,19 @@ package metier.service;
 import dao.ClientDao;
 import dao.EmployeDao;
 import dao.JpaUtil;
+import dao.MediumDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import metier.modele.Client;
 import metier.modele.Employe;
+import metier.modele.Medium;
 import metier.modele.ProfilAstral;
 import util.AstroNet;
 import util.Message;
@@ -157,5 +160,44 @@ public class Service {
             JpaUtil.fermerContextePersistance();
         }
         return emp;
+    }
+    
+    public Medium ajouterMedium(Medium med)
+    {
+        MediumDao dao = new MediumDao();
+        try
+        {
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
+            dao.creer(med);
+            JpaUtil.validerTransaction();
+            
+            Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterMedium");
+            Logger.getAnonymousLogger().log(Level.INFO, med.toString());
+        }
+        catch (Exception ex)
+        {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR ajouterMedium");
+            Logger.getAnonymousLogger().log(Level.SEVERE, med.toString());
+            med = null;
+            JpaUtil.annulerTransaction();
+        }
+        finally
+        {
+            JpaUtil.fermerContextePersistance();
+        }
+        return med;
+    }
+    
+    public void initBD()
+    {
+        Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
+        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
+        Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "M");
+        inscrireClient(b);
+        inscrireClient(a);
+        ajouterEmploye(c);
+        Medium m = new Medium("Mme Irma", "F", "Mes cartes répondront à toutes vos questions personnelles.");
+        ajouterMedium(m);
     }
 }

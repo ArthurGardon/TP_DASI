@@ -25,7 +25,7 @@ class Main {
     public static void main(String[] args)
     {
         JpaUtil.init();
-        testerInscription();
+        init();
         testerAuth();
         JpaUtil.destroy();
     }
@@ -43,15 +43,10 @@ class Main {
     }
 
     
-    static void testerInscription()
+    static void init()
     {
         Service service = new Service();
-        Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
-        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
-        Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "M");
-        service.inscrireClient(b);
-        service.inscrireClient(a);
-        service.ajouterEmploye(c);
+        service.initBD();
     }
     
     static void testerRechercheClient()
