@@ -277,7 +277,7 @@ public class Service {
         Employe emp = null;
         for (Employe e : employes)
         {
-            if (e.getGenre().equals(medium.getGenre()))
+            if (e.isIsAvailable() && e.getGenre().equals(medium.getGenre()))
             {
                 emp = e;
                 c = new Consultation(null, null, null, emp, medium, client);
