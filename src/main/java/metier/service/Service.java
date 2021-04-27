@@ -204,7 +204,7 @@ public class Service {
         //temp
         Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
         Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
-        Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "M");
+        Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "H");
         inscrireClient(b);
         inscrireClient(a);
         ajouterEmploye(c);
@@ -216,8 +216,12 @@ public class Service {
         ajouterMedium(spir);
         ajouterMedium(astr);
         
-        Consultation conslut = new Consultation(sd.parse("01/04/2018 18:30:00"), sd.parse("01/04/2018 18:45:00"), "passable", c, cart, b);
-        ajouterConsultation(conslut);
+        Consultation consult = new Consultation(sd.parse("01/04/2018 18:30:00"), sd.parse("01/04/2018 18:45:00"), "passable", c, cart, b);
+        ajouterConsultation(consult);
+        
+        Consultation consultTest = demanderConsultation(a, astr);
+        accepterConsultation(consultTest, new Date(1000000));
+        validerConsultation(consultTest, new Date(10000001), "meh");
     }
     
     public Consultation ajouterConsultation(Consultation cons)
@@ -246,4 +250,92 @@ public class Service {
         }
         return cons;
     }
+    
+    public Consultation demanderConsultation(Client client, Medium medium)
+    {
+        Consultation c = null;
+        
+        EmployeDao dao = new EmployeDao();
+        JpaUtil.creerContextePersistance();
+        List<Employe> employes = dao.chercherTous();
+        JpaUtil.fermerContextePersistance();
+        Employe emp = null;
+        for (Employe e : employes)
+        {
+            if (e.getGenre().equals(medium.getGenre()))
+            {
+                emp = e;
+                c = new Consultation(null, null, null, emp, medium, client);
+                break;
+            }
+        }
+        
+        if (emp!=null)
+        {
+            ajouterConsultation(c);
+            String message = "Bonjour "+emp.getPrenom() + ". Consultation requise pour " +
+                    client.getPrenom() + " " + client.getNom() + ". Médium à incarner: " + medium.getDenomination();
+            
+            Message.envoyerNotification(emp.getPhoneNumber(), message);
+        }
+        
+        return c;
+    }
+    
+    public void accepterConsultation(Consultation consult, Date dateDebut)
+    {
+        try{
+            ConsultationDao dao = new ConsultationDao();
+
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
+            consult.setDateDebut(dateDebut);
+            dao.modifier(consult);
+            JpaUtil.validerTransaction();
+
+            Client client = consult.getClient();
+            String message = "Bonjour " + client.getPrenom() + ". J'ai bien recu votre demande consultation pour " + dateDebut 
+                + " vous pouvez des a present me contacter au " + consult.getEmploye().getPhoneNumber() + "! A bientot, " 
+                + consult.getMedium().getDenomination();
+            Message.envoyerNotification(client.getPhoneNumber(), message);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès accepterConsultation");
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            JpaUtil.annulerTransaction();
+            Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR accepterConsult");
+            
+        }
+        finally{
+            JpaUtil.fermerContextePersistance();
+        }
+        
+    }
+    
+    public void validerConsultation(Consultation consult, Date dateFin, String commentaire)
+    {
+        try{
+            ConsultationDao dao = new ConsultationDao();
+
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
+            consult.setDateFin(dateFin);
+            consult.setCommentaire(commentaire);
+            dao.modifier(consult);
+            JpaUtil.validerTransaction();
+            
+            Logger.getAnonymousLogger().log(Level.INFO, "succès validerConsultation");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            JpaUtil.annulerTransaction();
+            Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR validerConsult");
+
+        }
+        finally{
+            JpaUtil.fermerContextePersistance();
+        }
+    }
 }
+

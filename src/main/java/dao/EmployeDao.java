@@ -31,7 +31,7 @@ public class EmployeDao {
     }
 
     public List<Employe> chercherTous() {
-        String s = "select e from Employe e order by e.nom asc";
+        String s = "select e from Employe e order by e.nbConsultations asc";
         TypedQuery<Employe> query = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
         return query.getResultList();
     }

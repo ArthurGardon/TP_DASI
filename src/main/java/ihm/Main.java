@@ -13,10 +13,15 @@ import metier.modele.Client;
 import dao.JpaUtil;
 import dao.ClientDao;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import metier.modele.Astrologue;
+import metier.modele.Cartomancien;
+import metier.modele.Consultation;
 import metier.modele.Employe;
+import metier.modele.Spirite;
 import metier.service.Service;
 
 
@@ -29,7 +34,6 @@ class Main {
     {
         JpaUtil.init();
         init();
-        testerAuth();
         JpaUtil.destroy();
     }
     

@@ -104,6 +104,11 @@ public class Consultation implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Consultation{" + "dateDebut=" + dateDebut + ", dateFin=" + dateFin + ", commentaire=" + commentaire + ", employe=" + employe + ", medium=" + medium + ", client=" + client + ", id=" + id + '}';
+    }
     
     
     
