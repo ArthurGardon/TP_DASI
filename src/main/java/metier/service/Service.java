@@ -224,6 +224,7 @@ public class Service {
         validerConsultation(consultTest, new Date(10000001), "meh");
     }
     
+    //methode outil pour persister/tester
     public Consultation ajouterConsultation(Consultation cons)
     {
         ConsultationDao dao = new ConsultationDao();
