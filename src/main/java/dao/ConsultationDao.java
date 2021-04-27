@@ -8,6 +8,7 @@ package dao;
 import java.util.List;
 import metier.modele.Consultation;
 import javax.persistence.TypedQuery;
+import metier.modele.Client;
 /**
  *
  * @author Arthur
@@ -34,5 +35,12 @@ public class ConsultationDao {
         String s = "select e from Consultation e order by e.nom asc";
         TypedQuery<Consultation> query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
         return query.getResultList();
+    }
+    
+    public List<Consultation> historiqueClient(Client c)
+    {
+        String s = "select e from Consultation e where e.client = :client";
+        TypedQuery<Consultation> query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
+        return query.setParameter("client", c).getResultList();
     }
 }

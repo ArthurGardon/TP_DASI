@@ -226,6 +226,8 @@ public class Service {
         accepterConsultation(consultTest, new Date(1000000));
         validerConsultation(consultTest, new Date(10000001), "meh");
         System.out.println(demanderAide(b, 4, 3, 2));
+        
+        System.out.println(getHistoriqueConsultations(a));
         //TEMP
     }
     
@@ -357,6 +359,15 @@ public class Service {
             Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
             res = null;
         }
+        return res;
+    }
+    
+    public List<Consultation> getHistoriqueConsultations(Client c)
+    {
+        List<Consultation> res;
+        JpaUtil.creerContextePersistance();
+        ConsultationDao dao = new ConsultationDao();
+        res = dao.historiqueClient(c);
         return res;
     }
 }
