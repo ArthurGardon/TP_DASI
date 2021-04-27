@@ -142,6 +142,7 @@ public class Service {
         return client;
     }
     
+    //methode de test/init
     public Employe ajouterEmploye(Employe emp)
     {
         EmployeDao dao = new EmployeDao();
@@ -169,6 +170,7 @@ public class Service {
         return emp;
     }
     
+    //methode de test/init
     public Medium ajouterMedium(Medium med)
     {
         MediumDao dao = new MediumDao();
@@ -219,9 +221,12 @@ public class Service {
         Consultation consult = new Consultation(sd.parse("01/04/2018 18:30:00"), sd.parse("01/04/2018 18:45:00"), "passable", c, cart, b);
         ajouterConsultation(consult);
         
+        //TEMP
         Consultation consultTest = demanderConsultation(a, astr);
         accepterConsultation(consultTest, new Date(1000000));
         validerConsultation(consultTest, new Date(10000001), "meh");
+        System.out.println(demanderAide(b, 4, 3, 2));
+        //TEMP
     }
     
     //methode outil pour persister/tester
@@ -337,6 +342,22 @@ public class Service {
         finally{
             JpaUtil.fermerContextePersistance();
         }
+    }
+    
+    public List<String> demanderAide(Client c, int amour, int sante, int travail)
+    {
+        String couleur = c.getProfilA().getColor();
+        String animal = c.getProfilA().getAnimal();
+        List<String> res;
+        try {
+            AstroNet astro = new AstroNet();
+            res = astro.getPredictions(couleur, animal, amour, sante, travail);
+        }
+        catch(IOException e){
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
+            res = null;
+        }
+        return res;
     }
 }
 
