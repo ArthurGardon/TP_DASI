@@ -6,6 +6,7 @@
 package dao;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import metier.modele.Client;
 import javax.persistence.TypedQuery;
 /**
@@ -36,7 +37,7 @@ public class ClientDao {
         return query.getResultList();
     }
     
-    public Client chercherMail(String mail){
+    public Client chercherMail(String mail) throws NoResultException{
         String s = "select e from Client e where e.mail = :mail";
         TypedQuery<Client> query = JpaUtil.obtenirContextePersistance().createQuery(s, Client.class);
         return query.setParameter("mail", mail).getSingleResult();

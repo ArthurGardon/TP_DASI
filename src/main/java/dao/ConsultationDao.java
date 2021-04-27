@@ -6,6 +6,7 @@
 package dao;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import metier.modele.Consultation;
 import javax.persistence.TypedQuery;
 import metier.modele.Client;
@@ -37,7 +38,7 @@ public class ConsultationDao {
         return query.getResultList();
     }
     
-    public List<Consultation> historiqueClient(Client c)
+    public List<Consultation> historiqueClient(Client c) throws NoResultException
     {
         String s = "select e from Consultation e where e.client = :client";
         TypedQuery<Consultation> query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);

@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.NoResultException;
 import metier.modele.Astrologue;
 import metier.modele.Cartomancien;
 import metier.modele.Client;
@@ -131,11 +132,17 @@ public class Service {
     {
         JpaUtil.creerContextePersistance();
         ClientDao dao = new ClientDao();
-        Client c = dao.chercherMail(mail);
+        Client c = null;
+        try {
+            dao.chercherMail(mail);
+        } catch (NoResultException e) {
+            c = null;
+        }
+        
         JpaUtil.fermerContextePersistance();
         
         Client client = null;
-        if (c.getMotDePasse().equals(motDePasse))
+        if (c!=null && c.getMotDePasse().equals(motDePasse))
         {
             client = c;
         }
@@ -367,7 +374,12 @@ public class Service {
         List<Consultation> res;
         JpaUtil.creerContextePersistance();
         ConsultationDao dao = new ConsultationDao();
-        res = dao.historiqueClient(c);
+        try{
+            res = dao.historiqueClient(c);
+        } catch (NoResultException e){
+            e.printStackTrace();
+            res = null;
+        }
         return res;
     }
 }
