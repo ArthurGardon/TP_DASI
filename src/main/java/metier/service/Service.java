@@ -273,7 +273,7 @@ public class Service {
         EmployeDao dao = new EmployeDao();
         JpaUtil.creerContextePersistance();
         List<Employe> employes = dao.chercherTous();
-        JpaUtil.fermerContextePersistance();
+        
         Employe emp = null;
         for (Employe e : employes)
         {
@@ -285,8 +285,14 @@ public class Service {
             }
         }
         
+
+
         if (emp!=null)
         {
+            emp.setIsAvailable(false);
+            dao.modifier(emp);
+            JpaUtil.fermerContextePersistance();
+            
             ajouterConsultation(c);
             String message = "Bonjour "+emp.getPrenom() + ". Consultation requise pour " +
                     client.getPrenom() + " " + client.getNom() + ". Médium à incarner: " + medium.getDenomination();
@@ -331,13 +337,20 @@ public class Service {
     public void validerConsultation(Consultation consult, Date dateFin, String commentaire)
     {
         try{
-            ConsultationDao dao = new ConsultationDao();
+            ConsultationDao consultDao = new ConsultationDao();
+            EmployeDao employeDao = new EmployeDao();
+            Employe emp = consult.getEmploye();
+            emp.setIsAvailable(true);
 
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
+            
             consult.setDateFin(dateFin);
             consult.setCommentaire(commentaire);
-            dao.modifier(consult);
+            consultDao.modifier(consult);
+            
+            employeDao.modifier(emp);
+            
             JpaUtil.validerTransaction();
             
             Logger.getAnonymousLogger().log(Level.INFO, "succès validerConsultation");
