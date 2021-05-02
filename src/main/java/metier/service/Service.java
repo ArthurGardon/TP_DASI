@@ -41,18 +41,7 @@ public class Service {
 
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
-        //calcul profil astral
-        //TODO catch and cancel the whole function?
-        try {
-            AstroNet astro = new AstroNet();
-            List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
-            ProfilAstral profilClient = new ProfilAstral(p.get(0), p.get(1), p.get(2), p.get(3));
-            client.setProfilA(profilClient);
-        }
-        catch(IOException e){
-            Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
-        }
-        //persistence du client
+        
         StringWriter corps = new StringWriter();
         PrintWriter mailWriter = new PrintWriter(corps);
         String sender = "contact@predict.if";
@@ -60,6 +49,13 @@ public class Service {
         String sujet= "";
         
         try {
+            //calcul profil astral
+            AstroNet astro = new AstroNet();
+            List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
+            ProfilAstral profilClient = new ProfilAstral(p.get(0), p.get(1), p.get(2), p.get(3));
+            client.setProfilA(profilClient);
+        
+            //persistence du client
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
             
@@ -74,15 +70,13 @@ public class Service {
             mailWriter.println("Bonjour " + client.getPrenom() + ", nous vous confirmons votre inscription au service PREDICT’IF.\nRendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos mediums");
         } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "erreur ajouterClient");
-            System.out.println("Erreur");
-            System.out.println(client.toString());
+            ex.printStackTrace();
             JpaUtil.annulerTransaction();
             
             //contenu du mail
             sujet = "Echec de l'inscription chez Predict'IF";
             mailWriter.println("Bonjour " + client.getPrenom() + ", votre inscription au service PREDICT’IF a malencontreusement échoué...\nMerci de recommencer ultérieurement.");
 
-            
             client = null;
         } finally {
             JpaUtil.fermerContextePersistance();
