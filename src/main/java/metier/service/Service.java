@@ -122,6 +122,23 @@ public class Service {
         return liste;
     }
     
+    public List<Medium> listerMediums() {
+        MediumDao dao = new MediumDao();
+        List<Medium> liste;
+        try {
+            JpaUtil.creerContextePersistance();
+            liste = dao.chercherTous();
+            Logger.getAnonymousLogger().log(Level.INFO, "succès listerMediums");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "erreur listerMediums");
+            ex.printStackTrace();
+            liste = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return liste;
+    }
+    
     public Client authentifierClient(String mail, String motDePasse)
     {
         JpaUtil.creerContextePersistance();
