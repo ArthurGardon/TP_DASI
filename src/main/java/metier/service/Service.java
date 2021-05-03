@@ -15,8 +15,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,6 +40,7 @@ public class Service {
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
 
+        //preparation du mail
         StringWriter corps = new StringWriter();
         PrintWriter mailWriter = new PrintWriter(corps);
         String sender = "contact@predict.if";
@@ -73,11 +72,11 @@ public class Service {
             ex.printStackTrace();
             JpaUtil.annulerTransaction();
 
+            client = null;
+
             //contenu du mail
             sujet = "Echec de l'inscription chez Predict'IF";
             mailWriter.println("Bonjour " + client.getPrenom() + ", votre inscription au service PREDICT’IF a malencontreusement échoué...\nMerci de recommencer ultérieurement.");
-
-            client = null;
         } finally {
             JpaUtil.fermerContextePersistance();
 
@@ -87,8 +86,8 @@ public class Service {
         return client;
     }
 
+    //methode de test
     public Client trouverClient(Long id) {
-
         ClientDao clientDao = new ClientDao();
         Client client = new Client();
         try {
@@ -97,7 +96,6 @@ public class Service {
             Logger.getAnonymousLogger().log(Level.INFO, "succès trouverClient");
         } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.INFO, "erreur trouverClient");
-            System.out.println("Erreur");
             client = null;
         } finally {
             JpaUtil.fermerContextePersistance();
@@ -105,6 +103,7 @@ public class Service {
         return client;
     }
 
+    //methode de test
     public List<Client> listerClients() {
         ClientDao clientDao = new ClientDao();
         List<Client> liste;
@@ -143,18 +142,17 @@ public class Service {
         JpaUtil.creerContextePersistance();
         ClientDao dao = new ClientDao();
         Client c = null;
+        Client client = null;
         try {
-            dao.chercherMail(mail);
+            c = dao.chercherMail(mail);
+            if (c.getMotDePasse().equals(motDePasse)) {
+                client = c;
+            }
         } catch (NoResultException e) {
             c = null;
         }
 
         JpaUtil.fermerContextePersistance();
-
-        Client client = null;
-        if (c != null && c.getMotDePasse().equals(motDePasse)) {
-            client = c;
-        }
         return client;
     }
 
@@ -252,12 +250,12 @@ public class Service {
         for (var med : listmed1) {
             System.out.println(med[0] + " nb de consultations " + med[1]);
         }
-        System.out.println("listmed1");
+        System.out.println("listmed2");
 
         for (var med : listmed2) {
             System.out.println(med[0] + " nb de consultations " + med[1]);
         }
-        System.out.println("listmed1");
+        System.out.println("listmed3");
 
         for (var med : listmed3) {
             System.out.println(med[0] + " nb de consultations " + med[1]);
@@ -350,16 +348,18 @@ public class Service {
         try {
             ConsultationDao consultDao = new ConsultationDao();
             EmployeDao employeDao = new EmployeDao();
+
             Employe emp = consult.getEmploye();
             emp.setIsAvailable(true);
             emp.addConsultation();
-            JpaUtil.creerContextePersistance();
-            JpaUtil.ouvrirTransaction();
 
             consult.setDateFin(dateFin);
             consult.setCommentaire(commentaire);
-            consultDao.modifier(consult);
 
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
+
+            consultDao.modifier(consult);
             employeDao.modifier(emp);
 
             JpaUtil.validerTransaction();
@@ -396,6 +396,7 @@ public class Service {
         try {
             res = dao.historiqueClient(c);
         } catch (NoResultException e) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur getHistoriqueConsultations");
             e.printStackTrace();
             res = null;
         }
@@ -421,7 +422,7 @@ public class Service {
     }
 
     public List<Object[]> statTopEmploye(int top) {
-        //returns Object[] with [0] Client and [1] number of consults
+        //returns Object[] with [0] Employe and [1] number of consults
         ConsultationDao dao = new ConsultationDao();
         List<Object[]> liste;
         try {
@@ -440,6 +441,7 @@ public class Service {
 
     public List<Object[]> statMediumFav(Client c, int nbMedium) {
         //returns Object[] with [0] Medium and [1] number of consults
+        //c = null renvoie le medium favori de tous les clients
         ConsultationDao dao = new ConsultationDao();
         List<Object[]> liste;
         try {
@@ -459,6 +461,7 @@ public class Service {
 
     public List<Object[]> statMediumIncarne(Employe emp, int nbMedium) {
         //returns Object[] with [0] Medium and [1] number of consults
+        //emp = null renvoie le medium le plus incarne de tous
         ConsultationDao dao = new ConsultationDao();
         List<Object[]> liste;
         try {
