@@ -12,8 +12,9 @@ import javax.persistence.*;
  * @author Arthur
  */
 @Entity
-public class Employe extends User{
-    boolean isAvailable = false;
+public class Employe extends User {
+
+    boolean isAvailable = true;
     String genre;
     int nbConsultations = 0;
 
@@ -41,12 +42,16 @@ public class Employe extends User{
         this.nbConsultations = nbConsultations;
     }
 
+    public void addConsultation() {
+        this.nbConsultations += 1;
+    }
+
     public Employe(String nom, String prenom, String mail, String motDePasse, String phoneNumber, String genre) {
         super(nom, prenom, mail, motDePasse, phoneNumber);
         this.genre = genre;
     }
 
     public Employe() {
-        
+
     }
 }

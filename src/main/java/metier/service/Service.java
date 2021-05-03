@@ -41,30 +41,30 @@ public class Service {
 
     public Client inscrireClient(Client client) {
         ClientDao clientDao = new ClientDao();
-        
+
         StringWriter corps = new StringWriter();
         PrintWriter mailWriter = new PrintWriter(corps);
         String sender = "contact@predict.if";
         String reciever = client.getMail();
-        String sujet= "";
-        
+        String sujet = "";
+
         try {
             //calcul profil astral
             AstroNet astro = new AstroNet();
             List<String> p = astro.getProfil(client.getNom(), client.getBirthDate());
             ProfilAstral profilClient = new ProfilAstral(p.get(0), p.get(1), p.get(2), p.get(3));
             client.setProfilA(profilClient);
-        
+
             //persistence du client
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
-            
+
             clientDao.creer(client);
-            
+
             JpaUtil.validerTransaction();
-            
+
             Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterClient");
-            
+
             //contenu du mail
             sujet = "Bienvenue chez Predict'IF";
             mailWriter.println("Bonjour " + client.getPrenom() + ", nous vous confirmons votre inscription au service PREDICT’IF.\nRendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos mediums");
@@ -72,7 +72,7 @@ public class Service {
             Logger.getAnonymousLogger().log(Level.SEVERE, "erreur ajouterClient");
             ex.printStackTrace();
             JpaUtil.annulerTransaction();
-            
+
             //contenu du mail
             sujet = "Echec de l'inscription chez Predict'IF";
             mailWriter.println("Bonjour " + client.getPrenom() + ", votre inscription au service PREDICT’IF a malencontreusement échoué...\nMerci de recommencer ultérieurement.");
@@ -80,7 +80,7 @@ public class Service {
             client = null;
         } finally {
             JpaUtil.fermerContextePersistance();
-            
+
             //envoi du mail
             Message.envoyerMail(sender, reciever, sujet, corps.toString());
         }
@@ -121,7 +121,7 @@ public class Service {
         }
         return liste;
     }
-    
+
     public List<Medium> listerMediums() {
         MediumDao dao = new MediumDao();
         List<Medium> liste;
@@ -138,9 +138,8 @@ public class Service {
         }
         return liste;
     }
-    
-    public Client authentifierClient(String mail, String motDePasse)
-    {
+
+    public Client authentifierClient(String mail, String motDePasse) {
         JpaUtil.creerContextePersistance();
         ClientDao dao = new ClientDao();
         Client c = null;
@@ -149,174 +148,178 @@ public class Service {
         } catch (NoResultException e) {
             c = null;
         }
-        
+
         JpaUtil.fermerContextePersistance();
-        
+
         Client client = null;
-        if (c!=null && c.getMotDePasse().equals(motDePasse))
-        {
+        if (c != null && c.getMotDePasse().equals(motDePasse)) {
             client = c;
         }
         return client;
     }
-    
+
     //methode de test/init
-    public Employe ajouterEmploye(Employe emp)
-    {
+    public Employe ajouterEmploye(Employe emp) {
         EmployeDao dao = new EmployeDao();
-        try
-        {
+        try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
             dao.creer(emp);
             JpaUtil.validerTransaction();
-            
+
             Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterEmploye");
             Logger.getAnonymousLogger().log(Level.INFO, emp.toString());
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR ajouterEmploye");
             Logger.getAnonymousLogger().log(Level.SEVERE, emp.toString());
             emp = null;
             JpaUtil.annulerTransaction();
-        }
-        finally
-        {
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
         return emp;
     }
-    
+
     //methode de test/init
-    public Medium ajouterMedium(Medium med)
-    {
+    public Medium ajouterMedium(Medium med) {
         MediumDao dao = new MediumDao();
-        try
-        {
+        try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
             dao.creer(med);
             JpaUtil.validerTransaction();
-            
+
             Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterMedium");
             Logger.getAnonymousLogger().log(Level.INFO, med.toString());
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR ajouterMedium");
             Logger.getAnonymousLogger().log(Level.SEVERE, med.toString());
             med = null;
             JpaUtil.annulerTransaction();
-        }
-        finally
-        {
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
         return med;
     }
-    
-    public void initBD() throws ParseException
-    {
+
+    public void initBD() throws ParseException {
         //temp
         SimpleDateFormat sd = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        
+
         //temp
         Client a = new Client("G", "G", "a@g.com", "123", "0707070707", new Date(10, 10, 2010), "5 rue");
-        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01,01,1998),"lotr rue");
+        Client b = new Client("B", "G", "b@g.com", "123", "0808080808", new Date(01, 01, 1998), "lotr rue");
         Employe c = new Employe("R", "T", "r@t.com", "234", "050505203", "H");
         inscrireClient(b);
         inscrireClient(a);
         ajouterEmploye(c);
-        
+
         Cartomancien cart = new Cartomancien("Mme Irma", "F", "Mes cartes répondront à toutes vos questions personnelles.");
         Spirite spir = new Spirite("Professeur Tran", "H", "Votre avenir est devant vous: regardons le ensemble!", "Marc de cafe, boule de cristal, oeilles de lapin");
         Astrologue astr = new Astrologue("Mr M", "H", "Avenir, avenir, que nous reserves tu?", "Institut des nouveaux Savoirs Astrologiques", "2010");
         ajouterMedium(cart);
         ajouterMedium(spir);
         ajouterMedium(astr);
-        
-        Consultation consult = new Consultation(sd.parse("01/04/2018 18:30:00"), sd.parse("01/04/2018 18:45:00"), "passable", c, cart, b);
-        ajouterConsultation(consult);
-        
+
+        Consultation consult1 = new Consultation(sd.parse("01/04/2018 18:30:00"), sd.parse("01/04/2018 18:45:00"), "passable", c, cart, b);
+        ajouterConsultation(consult1);
+        Consultation consult2 = new Consultation(sd.parse("02/04/2018 18:30:00"), sd.parse("02/04/2018 18:45:00"), "ok", c, cart, b);
+        ajouterConsultation(consult2);
+        Consultation consult3 = new Consultation(sd.parse("03/04/2018 18:30:00"), sd.parse("03/04/2018 18:45:00"), "ok", c, astr, b);
+        ajouterConsultation(consult2);
+
         //TEMP
         Consultation consultTest = demanderConsultation(a, astr);
         accepterConsultation(consultTest, new Date(1000000));
         validerConsultation(consultTest, new Date(10000001), "meh");
-        System.out.println(demanderAide(b, 4, 3, 2));
-        
+        System.out.println(demanderAide(a, 4, 3, 2));
+
         System.out.println(getHistoriqueConsultations(a));
+
+        List<Object[]> list = statTopClient(2);
+        List<Object[]> listemp = statTopEmploye(4);
+        List<Object[]> listmed2 = statMediumFav(b, 2);
+        List<Object[]> listmed3 = statMediumIncarne(c, 3);
+        List<Object[]> listmed1 = statMediumFav(null, 2);
+
+        for (var client : list) {
+            System.out.println(client[0] + " nb de consultations " + client[1]);
+        }
+        for (var empl : listemp) {
+            System.out.println(empl[0] + " nb de consultations " + empl[1]);
+        }
+        System.out.println("listmed1");
+        for (var med : listmed1) {
+            System.out.println(med[0] + " nb de consultations " + med[1]);
+        }
+        System.out.println("listmed1");
+
+        for (var med : listmed2) {
+            System.out.println(med[0] + " nb de consultations " + med[1]);
+        }
+        System.out.println("listmed1");
+
+        for (var med : listmed3) {
+            System.out.println(med[0] + " nb de consultations " + med[1]);
+        }
         //TEMP
     }
-    
+
     //methode outil pour persister/tester
-    public Consultation ajouterConsultation(Consultation cons)
-    {
+    public Consultation ajouterConsultation(Consultation cons) {
         ConsultationDao dao = new ConsultationDao();
-        try
-        {
+        try {
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
             dao.creer(cons);
             JpaUtil.validerTransaction();
-            
+
             Logger.getAnonymousLogger().log(Level.INFO, "succès ajouterConsultation");
             Logger.getAnonymousLogger().log(Level.INFO, cons.toString());
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR ajouterConsultation");
             Logger.getAnonymousLogger().log(Level.SEVERE, cons.toString());
             cons = null;
             JpaUtil.annulerTransaction();
-        }
-        finally
-        {
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
         return cons;
     }
-    
-    public Consultation demanderConsultation(Client client, Medium medium)
-    {
+
+    public Consultation demanderConsultation(Client client, Medium medium) {
         Consultation c = null;
-        
+
         EmployeDao dao = new EmployeDao();
         JpaUtil.creerContextePersistance();
-        List<Employe> employes = dao.chercherTous();
-        
+        List<Employe> employes = dao.chercherDispo();
+
         Employe emp = null;
-        for (Employe e : employes)
-        {
-            if (e.isIsAvailable() && e.getGenre().equals(medium.getGenre()))
-            {
+        for (Employe e : employes) {
+            if (e.isIsAvailable() && e.getGenre().equals(medium.getGenre())) {
                 emp = e;
                 c = new Consultation(null, null, null, emp, medium, client);
                 break;
             }
         }
-        
 
-
-        if (emp!=null)
-        {
+        if (emp != null) {
             emp.setIsAvailable(false);
             dao.modifier(emp);
             JpaUtil.fermerContextePersistance();
-            
+
             ajouterConsultation(c);
-            String message = "Bonjour "+emp.getPrenom() + ". Consultation requise pour " +
-                    client.getPrenom() + " " + client.getNom() + ". Médium à incarner: " + medium.getDenomination();
-            
+            String message = "Bonjour " + emp.getPrenom() + ". Consultation requise pour "
+                    + client.getPrenom() + " " + client.getNom() + ". Médium à incarner: " + medium.getDenomination();
+
             Message.envoyerNotification(emp.getPhoneNumber(), message);
         }
-        
+
         return c;
     }
-    
-    public void accepterConsultation(Consultation consult, Date dateDebut)
-    {
-        try{
+
+    public void accepterConsultation(Consultation consult, Date dateDebut) {
+        try {
             ConsultationDao dao = new ConsultationDao();
 
             JpaUtil.creerContextePersistance();
@@ -326,85 +329,149 @@ public class Service {
             JpaUtil.validerTransaction();
 
             Client client = consult.getClient();
-            String message = "Bonjour " + client.getPrenom() + ". J'ai bien recu votre demande consultation pour " + dateDebut 
-                + " vous pouvez des a present me contacter au " + consult.getEmploye().getPhoneNumber() + "! A bientot, " 
-                + consult.getMedium().getDenomination();
+            String message = "Bonjour " + client.getPrenom() + ". J'ai bien recu votre demande consultation pour " + dateDebut
+                    + " vous pouvez des a present me contacter au " + consult.getEmploye().getPhoneNumber() + "! A bientot, "
+                    + consult.getMedium().getDenomination();
             Message.envoyerNotification(client.getPhoneNumber(), message);
             Logger.getAnonymousLogger().log(Level.INFO, "succès accepterConsultation");
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             JpaUtil.annulerTransaction();
             Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR accepterConsult");
-            
-        }
-        finally{
+
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
-        
+
     }
-    
-    public void validerConsultation(Consultation consult, Date dateFin, String commentaire)
-    {
-        try{
+
+    public void validerConsultation(Consultation consult, Date dateFin, String commentaire) {
+        try {
             ConsultationDao consultDao = new ConsultationDao();
             EmployeDao employeDao = new EmployeDao();
             Employe emp = consult.getEmploye();
             emp.setIsAvailable(true);
-
+            emp.addConsultation();
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
-            
+
             consult.setDateFin(dateFin);
             consult.setCommentaire(commentaire);
             consultDao.modifier(consult);
-            
+
             employeDao.modifier(emp);
-            
+
             JpaUtil.validerTransaction();
-            
+
             Logger.getAnonymousLogger().log(Level.INFO, "succès validerConsultation");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             JpaUtil.annulerTransaction();
             Logger.getAnonymousLogger().log(Level.SEVERE, "ERREUR validerConsult");
 
-        }
-        finally{
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
     }
-    
-    public List<String> demanderAide(Client c, int amour, int sante, int travail)
-    {
+
+    public List<String> demanderAide(Client c, int amour, int sante, int travail) {
         String couleur = c.getProfilA().getColor();
         String animal = c.getProfilA().getAnimal();
         List<String> res;
         try {
             AstroNet astro = new AstroNet();
             res = astro.getPredictions(couleur, animal, amour, sante, travail);
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             Logger.getAnonymousLogger().log(Level.INFO, "erreur AstroNetAPI");
             res = null;
         }
         return res;
     }
-    
-    public List<Consultation> getHistoriqueConsultations(Client c)
-    {
+
+    public List<Consultation> getHistoriqueConsultations(Client c) {
         List<Consultation> res;
         JpaUtil.creerContextePersistance();
         ConsultationDao dao = new ConsultationDao();
-        try{
+        try {
             res = dao.historiqueClient(c);
-        } catch (NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
             res = null;
         }
         return res;
     }
-}
 
+    public List<Object[]> statTopClient(int top) {
+        //returns Object[] with [0] Client and [1] number of consults
+        ConsultationDao dao = new ConsultationDao();
+        List<Object[]> liste;
+        try {
+            JpaUtil.creerContextePersistance();
+            liste = dao.topClient(top);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès statTopClient");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur statTopClient");
+            ex.printStackTrace();
+            liste = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return liste;
+    }
+
+    public List<Object[]> statTopEmploye(int top) {
+        //returns Object[] with [0] Client and [1] number of consults
+        ConsultationDao dao = new ConsultationDao();
+        List<Object[]> liste;
+        try {
+            JpaUtil.creerContextePersistance();
+            liste = dao.topEmploye(top);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès statTopEmploye");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur statTopEmploye");
+            ex.printStackTrace();
+            liste = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return liste;
+    }
+
+    public List<Object[]> statMediumFav(Client c, int nbMedium) {
+        //returns Object[] with [0] Medium and [1] number of consults
+        ConsultationDao dao = new ConsultationDao();
+        List<Object[]> liste;
+        try {
+            JpaUtil.creerContextePersistance();
+            liste = dao.topMediumClient(c, nbMedium);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès statMediumFav");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur statMediumFav");
+            ex.printStackTrace();
+            liste = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return liste;
+
+    }
+
+    public List<Object[]> statMediumIncarne(Employe emp, int nbMedium) {
+        //returns Object[] with [0] Medium and [1] number of consults
+        ConsultationDao dao = new ConsultationDao();
+        List<Object[]> liste;
+        try {
+            JpaUtil.creerContextePersistance();
+            liste = dao.topMediumEmploye(emp, nbMedium);
+            Logger.getAnonymousLogger().log(Level.INFO, "statMediumIncarne");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur statMediumIncarne");
+            ex.printStackTrace();
+            liste = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return liste;
+    }
+}

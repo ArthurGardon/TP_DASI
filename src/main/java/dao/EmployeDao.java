@@ -35,4 +35,10 @@ public class EmployeDao {
         TypedQuery<Employe> query = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
         return query.getResultList();
     }
+    
+    public List<Employe> chercherDispo() {
+        String s = "select e from Employe e where e.isAvailable = 1 order by e.nbConsultations asc";
+        TypedQuery<Employe> query = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
+        return query.getResultList();
+    }
 }
