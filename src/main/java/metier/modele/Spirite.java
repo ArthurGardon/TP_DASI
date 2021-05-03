@@ -30,7 +30,9 @@ public class Spirite extends Medium {
     public void setSupport(String support) {
         this.support = support;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "Spirite{" + "support=" + support + '}' + super.toString();
+    }    
 }

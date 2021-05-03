@@ -17,7 +17,6 @@ import javax.persistence.InheritanceType;
  *
  * @author Arthur
  */
-//creer qu'une seule table car les differences entre types de medium sont faibles
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public class Medium implements Serializable {
@@ -68,6 +67,9 @@ public class Medium implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Medium{" + "denomination=" + denomination + ", genre=" + genre + ", presentation=" + presentation + ", id=" + id + '}';
+    }
 }
