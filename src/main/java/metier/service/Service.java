@@ -231,36 +231,6 @@ public class Service {
         accepterConsultation(consultTest, new Date(1000000));
         validerConsultation(consultTest, new Date(10000001), "meh");
         System.out.println(demanderAide(a, 4, 3, 2));
-
-        System.out.println(getHistoriqueConsultations(a));
-
-        List<Object[]> list = statTopClient(2);
-        List<Object[]> listemp = statTopEmploye(4);
-        List<Object[]> listmed2 = statMediumFav(b, 2);
-        List<Object[]> listmed3 = statMediumIncarne(c, 3);
-        List<Object[]> listmed1 = statMediumFav(null, 2);
-
-        for (var client : list) {
-            System.out.println(client[0] + " nb de consultations " + client[1]);
-        }
-        for (var empl : listemp) {
-            System.out.println(empl[0] + " nb de consultations " + empl[1]);
-        }
-        System.out.println("listmed1");
-        for (var med : listmed1) {
-            System.out.println(med[0] + " nb de consultations " + med[1]);
-        }
-        System.out.println("listmed2");
-
-        for (var med : listmed2) {
-            System.out.println(med[0] + " nb de consultations " + med[1]);
-        }
-        System.out.println("listmed3");
-
-        for (var med : listmed3) {
-            System.out.println(med[0] + " nb de consultations " + med[1]);
-        }
-        //TEMP
     }
 
     //methode outil pour persister/tester
