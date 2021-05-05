@@ -5,25 +5,16 @@ package ihm;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import metier.modele.Client;
 import dao.JpaUtil;
-import dao.ClientDao;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import metier.modele.Astrologue;
-import metier.modele.Cartomancien;
 import metier.modele.Consultation;
 import metier.modele.Employe;
 import metier.modele.Medium;
-import metier.modele.Spirite;
 import metier.service.Service;
 
 /**

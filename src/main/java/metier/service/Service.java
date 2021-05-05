@@ -225,12 +225,6 @@ public class Service {
         ajouterConsultation(consult2);
         Consultation consult3 = new Consultation(sd.parse("03/04/2018 18:30:00"), sd.parse("03/04/2018 18:45:00"), "ok", c, astr, b);
         ajouterConsultation(consult2);
-
-        //TEMP
-        Consultation consultTest = demanderConsultation(a, astr);
-        accepterConsultation(consultTest, new Date(1000000));
-        validerConsultation(consultTest, new Date(10000001), "meh");
-        System.out.println(demanderAide(a, 4, 3, 2));
     }
 
     //methode outil pour persister/tester
@@ -446,5 +440,10 @@ public class Service {
             JpaUtil.fermerContextePersistance();
         }
         return liste;
+    }
+    
+    //pas sur si nécessaire
+    public ProfilAstral getProfilAstral(Client c){
+        return c.getProfilA();
     }
 }
