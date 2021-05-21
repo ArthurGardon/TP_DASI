@@ -48,6 +48,19 @@ public class ConsultationDao {
         return query.setParameter("client", c).getResultList();
     }
 
+    public Consultation chercherParEmploye(Employe emp) {
+        Consultation c = null;
+        try {
+            String s = "select e from Consultation e where e.employe = :emp and e.dateFin is null";
+            TypedQuery<Consultation> query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
+            return query.setParameter("emp", emp).getSingleResult();
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+            c = null;
+        }
+        return c;
+    }
+
     public List<Object[]> topClient(int top) {
         //retourne une liste de Object[] avec [0] Client et [1] nmbre de consult
         String s = "select c.client, count(c) as sumCons from Consultation c "
@@ -72,13 +85,13 @@ public class ConsultationDao {
 
         s += "group by c.medium order by sumCons desc";
         TypedQuery<Object[]> res = JpaUtil.obtenirContextePersistance().createQuery(s, Object[].class).setMaxResults(nbMedium);
-        
+
         if (cl != null) {
             res.setParameter("cl", cl);
         }
         return res.getResultList();
     }
-    
+
     public List<Object[]> topMediumEmploye(Employe emp, int nbMedium) {
         //retourne une liste de Object[] avec [0] medium et [1] nmbre de consult
         String s = "select c.medium, count(c) as sumCons from Consultation c ";
@@ -87,7 +100,7 @@ public class ConsultationDao {
         }
         s += "group by c.medium order by sumCons desc";
         TypedQuery<Object[]> res = JpaUtil.obtenirContextePersistance().createQuery(s, Object[].class).setMaxResults(nbMedium);
-        
+
         if (emp != null) {
             res.setParameter("emp", emp);
         }

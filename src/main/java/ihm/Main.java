@@ -27,7 +27,7 @@ class Main {
 
     public static void main(String[] args) {
         JpaUtil.init();
-        init();
+        //init();
         JpaUtil.destroy();
     }
 

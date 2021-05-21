@@ -102,6 +102,56 @@ public class Service {
         }
         return client;
     }
+    //methode de test
+
+    public Medium trouverMedium(Long id) {
+        MediumDao dao = new MediumDao();
+        Medium m = new Medium();
+        try {
+            JpaUtil.creerContextePersistance();
+            m = dao.chercherParId(id);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès trouverMedium");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur trouverMedium");
+            m = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return m;
+    }
+    //methode de test
+
+    public Employe trouverEmploye(Long id) {
+        EmployeDao dao = new EmployeDao();
+        Employe e = new Employe();
+        try {
+            JpaUtil.creerContextePersistance();
+            e = dao.chercherParId(id);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès trouverEmploye");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur trouverEmploye");
+            e = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return e;
+    }
+    
+     public Consultation trouverConsultation(Long id) {
+        ConsultationDao dao = new ConsultationDao();
+        Consultation c = new Consultation();
+        try {
+            JpaUtil.creerContextePersistance();
+            c = dao.chercherParId(id);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès trouverConsultation");
+        } catch (Exception ex) {
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur trouverConsultation");
+            c = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return c;
+    }
 
     //methode de test
     public List<Client> listerClients() {
@@ -154,6 +204,24 @@ public class Service {
 
         JpaUtil.fermerContextePersistance();
         return client;
+    }
+
+    public Employe authentifierEmploye(String mail, String motDePasse) {
+        JpaUtil.creerContextePersistance();
+        EmployeDao dao = new EmployeDao();
+        Employe e = null;
+        Employe emp = null;
+        try {
+            e = dao.chercherMail(mail);
+            if (e.getMotDePasse().equals(motDePasse)) {
+                emp = e;
+            }
+        } catch (NoResultException ex) {
+            e = null;
+        }
+
+        JpaUtil.fermerContextePersistance();
+        return emp;
     }
 
     //methode de test/init
@@ -255,6 +323,7 @@ public class Service {
         EmployeDao dao = new EmployeDao();
         JpaUtil.creerContextePersistance();
         List<Employe> employes = dao.chercherDispo();
+        JpaUtil.fermerContextePersistance();
 
         Employe emp = null;
         for (Employe e : employes) {
@@ -266,8 +335,16 @@ public class Service {
         }
 
         if (emp != null) {
-            emp.setIsAvailable(false);
-            dao.modifier(emp);
+            JpaUtil.creerContextePersistance();
+            try {
+                JpaUtil.ouvrirTransaction();
+                emp.setIsAvailable(false);
+                dao.modifier(emp);
+                JpaUtil.validerTransaction();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             JpaUtil.fermerContextePersistance();
 
             ajouterConsultation(c);
@@ -441,9 +518,26 @@ public class Service {
         }
         return liste;
     }
-    
+
     //pas sur si nécessaire
-    public ProfilAstral getProfilAstral(Client c){
+    public ProfilAstral getProfilAstral(Client c) {
         return c.getProfilA();
+    }
+    
+    public Consultation getConsultation (Employe e) {
+        ConsultationDao dao = new ConsultationDao();
+        Consultation c = new Consultation();
+        try {
+            JpaUtil.creerContextePersistance();
+            c = dao.chercherParEmploye(e);
+            Logger.getAnonymousLogger().log(Level.INFO, "succès getConsultation");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Logger.getAnonymousLogger().log(Level.INFO, "erreur getConsultation");
+            c = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return c;
     }
 }

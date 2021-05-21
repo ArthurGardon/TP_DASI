@@ -31,7 +31,7 @@ public class MediumDao {
     }
 
     public List<Medium> chercherTous() {
-        String s = "select e from Medium e order by e.nom asc";
+        String s = "select e from Medium e order by e.denomination asc";
         TypedQuery<Medium> query = JpaUtil.obtenirContextePersistance().createQuery(s, Medium.class);
         return query.getResultList();
     }

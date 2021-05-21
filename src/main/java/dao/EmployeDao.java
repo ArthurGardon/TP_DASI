@@ -6,8 +6,10 @@
 package dao;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import metier.modele.Employe;
 import javax.persistence.TypedQuery;
+import metier.modele.Client;
 /**
  *
  * @author Arthur
@@ -40,5 +42,11 @@ public class EmployeDao {
         String s = "select e from Employe e where e.isAvailable = 1 order by e.nbConsultations asc";
         TypedQuery<Employe> query = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
         return query.getResultList();
+    }
+    
+    public Employe chercherMail(String mail) throws NoResultException{
+        String s = "select e from Employe e where e.mail = :mail";
+        TypedQuery<Employe> query = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
+        return query.setParameter("mail", mail).getSingleResult();
     }
 }
